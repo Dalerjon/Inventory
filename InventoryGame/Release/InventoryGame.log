@@ -1,0 +1,10 @@
+﻿  stdafx.cpp
+  DropableTable.cpp
+  GameWindow.cpp
+  InventoryGame.cpp
+  SqlModule.cpp
+  Subject.cpp
+  moc_GameWindow.cpp
+  Generating code
+  Finished generating code
+  InventoryGame.vcxproj -> D:\MyProjects\Test Game\InventoryGame\Release\InventoryGame.exe
