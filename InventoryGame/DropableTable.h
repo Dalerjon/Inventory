@@ -5,6 +5,8 @@
 #include <QSound>
 #include "Inventory.h"
 #include "Subject.h"
+#include "TupleObject.h"
+
 
 class QDragEnterEvent;
 class QDropEvent;
@@ -16,6 +18,8 @@ public:
 	DropableTable(QWidget *parent = 0);
 	void initTable();
 	void clearTable();
+	void updateTable(inventoryObject obj);
+	Inventory<Subject> inv;
 protected:
 	void dragEnterEvent(QDragEnterEvent *event) override;
 	void dragMoveEvent(QDragMoveEvent *event) override;
@@ -23,7 +27,7 @@ protected:
 	void DropableTable::mousePressEvent(QMouseEvent *event);
 
 private:
-	Inventory<Subject> inv;
+	
 	Subject sub;
 
 	//для чистого экземпляра картинки

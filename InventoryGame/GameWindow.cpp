@@ -5,7 +5,8 @@
 #include <QImageReader>
 #include <QDebug>
 
-GameWindow::GameWindow()
+
+GameWindow::GameWindow(bool cIsServer, QString* cIp)
 {
 	setupUi(this);
 	gamePanelWidget->setDisabled(true);
@@ -28,6 +29,16 @@ GameWindow::GameWindow()
 	//создаем соединение между сигналами и слотами
 	createConnections();
 	
+	//Запускаем режим сервера или клиента  в зависимости от выбора игрока
+	isServer = cIsServer;
+	ip = cIp;
+	
+	if (isServer == true)
+	{
+		server = new Server(this);
+		server->startListen();
+		statusLb->setText(server->serverParamAsString());
+	}
 }
 
 GameWindow::~GameWindow()
@@ -48,6 +59,28 @@ void GameWindow::startGame()
 	//делаем активным игровое поле
 	gamePanelWidget->setDisabled(false);
 	invTableWidget->clearTable();
+	if (isServer == false)
+	{
+		if (client == NULL)
+		{
+			client = new Client(this);
+			client->start(*ip, 2323);
+			statusLb->setText(client->clientParamAsString());
+		}
+		else
+		{
+			QString str = "<?xml version = '1.0' encoding='utf-8'?><start></start>";
+			client->socket.write(str.toLatin1());
+		}
+	}
+	else
+	{
+		if (server->isSocketActive())
+		{
+			QString str = "<?xml version = '1.0' encoding='utf-8'?><start></start>";
+			server->socket->write(str.toLatin1());
+		}			
+	}
 	likeCollapce(true);
 }
 
@@ -56,10 +89,32 @@ void GameWindow::showMenu()
 	//показываем главное меню
 	likeCollapce(false);
 	gamePanelWidget->setDisabled(true);
+	if (isServer == false)
+	{
+		QString str = "<?xml version = '1.0' encoding='utf-8'?><stop></stop>";
+		client->socket.write(str.toLatin1());
+	}
+	else
+	{
+		if (server->isSocketActive())
+		{
+			QString str = "<?xml version = '1.0' encoding='utf-8'?><stop></stop>";
+			server->socket->write(str.toLatin1());
+		}
+	}
 }
+
 
 void GameWindow::closeWindow()
 {
+	if (isServer == true)
+	{
+		if (server->isSocketActive())
+		{
+			QString str = "<?xml version = \"1.0\" encoding=\"utf-8\"?>\n<close>\n</close>\n";
+			server->socket->write(str.toLatin1());
+		}
+	}
 	this->close();
 }
 
@@ -86,5 +141,22 @@ void GameWindow::likeCollapce(bool isCollapced)
 	
 }
 
+
+void GameWindow::menu()
+{
+	likeCollapce(false);
+	gamePanelWidget->setDisabled(true);
+}
+
+void GameWindow::winClose()
+{
+	this->close();
+}
+void GameWindow::start()
+{
+	gamePanelWidget->setDisabled(false);
+	invTableWidget->clearTable();
+	likeCollapce(true);
+}
 
 

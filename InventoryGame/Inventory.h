@@ -54,6 +54,58 @@ public:
 		}
 	}
 
+	//проверка инвентаря на пустоту
+	template<class T>
+	bool isInventoryEmpty()
+	{
+		for (int i = 0; i < rowCount*columnCount; i++)
+		{
+			if (!itemList[i].isEmpty<T>())
+				return false;
+		}
+		return true;
+	}
+
+	//получаем количество объектов в ячейке ввиде строки
+	template<class T>
+	QString itemAtToXmlString(int r, int c, QString p, QString t, int ct)
+	{
+		QString str = QString("<?xml version='1.0' encoding='utf-8'?>");
+		str = str + "<object>";
+		str = str + "<row>" + QString::number(r) + "</row>";
+		str = str + "<column>" + QString::number(c) + "</column>";
+		str = str + "<path>" + p + "</path>";
+		str = str + "<type>" + t + "</type>";
+		str = str + "<count>" + QString::number(ct) + "</count>";
+		str = str + "</object>";
+		qDebug() << str;
+		return str;
+	}
+
+	//получаем количество объектов в инвентаре ввиде строки
+	QString inventoryToXmlString()
+	{
+		QString str = "";
+		int row = -1;
+		int column = -1;
+		for (int i = 0; i < rowCount*columnCount; i++)
+		{
+			calculateColumnAndRow(i, row, column);
+			str = str + "<?xml version='1.0' encoding='utf-8'?>";
+			str = str + "<object>";
+			str = str + "<row>" + QString::number(row) + "</row>";
+			str = str + "<column>" + QString::number(column) + "</column>";
+			str = str + "<path>" + itemList[i].getItem<T>().getPath() + "</path>";
+			str = str + "<type>" + itemList[i].getItem<T>().getType() + "</type>";
+			str = str + "<count>" + QString::number(itemList[i].getCount<T>()) + "</count>";
+			str = str + "</object>";
+			row = -1;
+			column = -1;
+		}
+		qDebug() << str;
+		return str;
+	}
+
 	//проверка на нустоту ячейки в инвентаре
 	template<class T>
 	bool inventoryAtIsEmpty(int r, int c)
@@ -104,6 +156,17 @@ public:
 		}
 	}
 
+	//количество предмета в ячейке, по индексу
+	template<class T>
+	int getItemCountAt(int index)
+	{
+		if (-1 != index)
+		{
+			return itemList[index].getCount<T>();
+		}
+		return -1;
+	}
+
 	//количество предмета в ячейке
 	template<class T>
 	int itemCountAt(int r, int c)
@@ -140,6 +203,27 @@ public:
 		{
 			index = c;
 			return index;
+		}
+	}
+
+	//Нахождение строки и столбца по индексу
+	void calculateColumnAndRow(int index, int &row, int &column)
+	{
+		if (index < -1)
+		{
+			row = -1;
+			column = -1;
+		}
+		else
+		{
+			if (0 == index)
+			{
+				row = 0;
+				column = 0;
+				return;
+			}
+			row = index / columnCount;
+			column = index - row*columnCount;
 		}
 	}
 	

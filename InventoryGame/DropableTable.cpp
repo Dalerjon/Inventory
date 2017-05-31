@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <QtWidgets>
 #include "dropabletable.h"
+#include "GameWindow.h"
 
 DropableTable::DropableTable(QWidget *parent)
 : QTableWidget(parent)
@@ -121,6 +122,19 @@ void DropableTable::mousePressEvent(QMouseEvent *event)
 				this->removeCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
 				inv.delteItemAt<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
 				inv.deleteFromDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+				//логика для отклика на действия на стороне сервера или клиента
+				GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+				if (mainParent->isServer)
+				{
+					
+					if (mainParent->server->isSocketActive())
+						mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), "", "", 0));
+				}
+				else
+				{
+					if (mainParent->client->isSocketActive())
+						mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), "", "", 0));
+				}
 			}
 		}
 		else {
@@ -141,6 +155,18 @@ void DropableTable::mousePressEvent(QMouseEvent *event)
 					QSound::play(":/sounds/bite.wav");
 					this->removeCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
 					inv.deleteFromDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+					GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+					if (mainParent->isServer)
+					{
+						
+						if (mainParent->server->isSocketActive())
+							mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), "", "", 0)); 
+					}
+					else
+					{
+						if (mainParent->client->isSocketActive())
+							mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), "", "", 0)); 
+					}
 				}
 				if (curCount > 1)
 				{
@@ -161,8 +187,22 @@ void DropableTable::mousePressEvent(QMouseEvent *event)
 					newIcon->setPixmap(QPixmap::fromImage(img));
 					inv.setItemAt<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub, curCount);
 					inv.updateInDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+					GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+					if (mainParent->isServer)
+					{
+						
+						if (mainParent->server->isSocketActive())
+							mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), curCount));
+					}
+					else
+					{
+						if (mainParent->client->isSocketActive())
+							mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), curCount)); 
+					}
+						
 					QSound::play(":/sounds/bite.wav");
 					this->setCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), newIcon);
+					delete painter;
 				}
 			}
 		}
@@ -208,6 +248,19 @@ void DropableTable::dropEvent(QDropEvent *event)
 			newIcon->setPixmap(QPixmap::fromImage(img));
 			inv.setItemAt<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub, count);
 			inv.insertToDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+			GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+			if (mainParent->isServer)
+			{
+				if (mainParent->server->isSocketActive())
+					mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count));
+			}
+			else
+			{
+				if (mainParent->client->isSocketActive())
+					mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count));
+			}
+			delete painter;
+				
 			this->setCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), newIcon);
 		}
 		else if (inv.inventoryAtIsEmpty<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x())) && count > 1)
@@ -222,6 +275,18 @@ void DropableTable::dropEvent(QDropEvent *event)
 			newIcon->setPixmap(QPixmap::fromImage(img));
 			inv.setItemAt<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub, count);
 			inv.insertToDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+			GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+			if (mainParent->isServer)
+			{
+				
+				if (mainParent->server->isSocketActive())
+					mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count));
+			}
+			else
+			{
+				if (mainParent->client->isSocketActive())
+					mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count));
+			}
 			this->setCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), newIcon);
 		}
 		else
@@ -239,8 +304,22 @@ void DropableTable::dropEvent(QDropEvent *event)
 				newIcon->setPixmap(QPixmap::fromImage(img));
 				inv.setItemAt<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub, count + curCount);
 				inv.updateInDb<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()));
+				GameWindow* mainParent = ((GameWindow*) this->parentWidget()->parentWidget()->parentWidget());
+				if (mainParent->isServer)
+				{
+					
+					if (mainParent->server->isSocketActive())
+						mainParent->server->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count + curCount));
+				}
+				else
+				{
+					if (mainParent->client->isSocketActive())
+						mainParent->client->startWrite(inv.itemAtToXmlString<Subject>(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), sub.getPath(), sub.getType(), count + curCount));
+				}
+					
 				this->setCellWidget(this->rowAt(event->pos().y()), this->columnAt(event->pos().x()), newIcon);
 			}
+			delete painter;
 		}
 		if (event->source() == this) {
 			event->setDropAction(Qt::MoveAction);
@@ -256,3 +335,69 @@ void DropableTable::dropEvent(QDropEvent *event)
 	clickedColumn = clickedRow = -1;
 	inv.showDebug<Subject>();
 }
+
+void DropableTable::updateTable(inventoryObject obj)
+{
+	int row = -1;
+	int column = -1;
+	QString path;
+	QString type;
+	int count = 0;
+	
+	QLabel *newIcon = new QLabel(this);
+	newIcon->setGeometry(QRect(0, 0, 149, 149));
+	newIcon->setMinimumSize(QSize(149, 149));
+	newIcon->setMaximumSize(QSize(149, 149));
+	newIcon->setObjectName("iconLb");
+	newIcon->setAttribute(Qt::WA_DeleteOnClose);
+
+	row = std::get<0>(obj);
+	column = std::get<1>(obj);
+	path = std::get<2>(obj);
+	type = std::get<3>(obj);
+	count = std::get<4>(obj);
+	if (inv.itemCountAt<Subject>(row, column) != count)
+	{
+		QImage img;
+		if (inv.itemCountAt<Subject>(row, column) == 0)
+		{
+			sub.setPath(path);
+			sub.setType(type);
+			img = clearImg;
+			QPainter* painter = new QPainter(&img);
+			painter->setPen(Qt::black);
+			painter->setFont(QFont("Arial", 10));
+			painter->drawText(img.rect(), Qt::AlignRight | Qt::AlignBottom, QString::number(count));
+			newIcon->setPixmap(QPixmap::fromImage(img));
+			inv.setItemAt<Subject>(row, column, sub, count);
+			inv.insertToDb<Subject>(row, column);
+			this->setCellWidget(row, column, newIcon);
+			delete painter;
+		}
+		else
+		{
+			if (inv.itemCountAt<Subject>(row, column) != 0 && count == 0)
+			{
+				inv.delteItemAt<Subject>(row, column);
+				this->removeCellWidget(row, column);
+				inv.deleteFromDb<Subject>(row, column);
+			}
+			else
+			{
+				sub.setPath(path);
+				sub.setType(type);
+				img = clearImg;
+				QPainter* painter = new QPainter(&img);
+				painter->setPen(Qt::black);
+				painter->setFont(QFont("Arial", 10));
+				painter->drawText(img.rect(), Qt::AlignRight | Qt::AlignBottom, QString::number(count));
+				newIcon->setPixmap(QPixmap::fromImage(img));
+				inv.setItemAt<Subject>(row, column, sub, count);
+				inv.updateInDb<Subject>(row, column);
+				this->setCellWidget(row, column, newIcon);
+				delete painter;
+			}
+		}
+	}
+}
+

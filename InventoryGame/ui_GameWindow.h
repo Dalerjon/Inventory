@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'GameWindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.1
+** Created by: Qt User Interface Compiler version 5.6.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -17,6 +17,7 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
@@ -48,6 +49,9 @@ public:
     QSpacerItem *horizontalSpacer;
     QSpacerItem *horizontalSpacer_5;
     DropableTable *invTableWidget;
+    QWidget *statusWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *statusLb;
 
     void setupUi(QMainWindow *GameWindow)
     {
@@ -106,6 +110,7 @@ public:
 
         gamePanelWidget = new QWidget(centralwidget);
         gamePanelWidget->setObjectName(QStringLiteral("gamePanelWidget"));
+        gamePanelWidget->setMaximumSize(QSize(16777215, 16777215));
         gridLayout = new QGridLayout(gamePanelWidget);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(50, 50, 50, 50);
@@ -135,7 +140,6 @@ public:
         menuBtn->setAutoRepeat(false);
         menuBtn->setAutoExclusive(false);
         menuBtn->setAutoDefault(false);
-        menuBtn->setDefault(false);
         menuBtn->setFlat(false);
 
         verticalLayout_2->addWidget(menuBtn);
@@ -173,9 +177,24 @@ public:
 
         verticalLayout->addWidget(gamePanelWidget);
 
+        statusWidget = new QWidget(centralwidget);
+        statusWidget->setObjectName(QStringLiteral("statusWidget"));
+        horizontalLayout_2 = new QHBoxLayout(statusWidget);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        statusLb = new QLabel(statusWidget);
+        statusLb->setObjectName(QStringLiteral("statusLb"));
+
+        horizontalLayout_2->addWidget(statusLb);
+
+
+        verticalLayout->addWidget(statusWidget);
+
         GameWindow->setCentralWidget(centralwidget);
 
         retranslateUi(GameWindow);
+
+        menuBtn->setDefault(false);
+
 
         QMetaObject::connectSlotsByName(GameWindow);
     } // setupUi
@@ -186,6 +205,7 @@ public:
         startBtn->setText(QApplication::translate("GameWindow", "Start", 0));
         closeBtn->setText(QApplication::translate("GameWindow", "Close", 0));
         menuBtn->setText(QApplication::translate("GameWindow", "Main menu", 0));
+        statusLb->setText(QString());
     } // retranslateUi
 
 };

@@ -127,6 +127,9 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Expanding</enum>
+      </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
@@ -137,6 +140,12 @@
     </item>
     <item>
      <widget class="QWidget" name="gamePanelWidget" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
         <number>50</number>
@@ -287,6 +296,19 @@
          <column/>
          <column/>
          <column/>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="statusWidget" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLabel" name="statusLb">
+         <property name="text">
+          <string/>
+         </property>
         </widget>
        </item>
       </layout>

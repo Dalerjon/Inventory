@@ -51,6 +51,12 @@
     <ClInclude Include="SqlModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ui_RunDlg.h">
+      <Filter>Header Files\UI header</Filter>
+    </ClInclude>
+    <ClInclude Include="TupleObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -71,6 +77,24 @@
     <ClCompile Include="Subject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="moc_RunDlg.cpp">
+      <Filter>moc</Filter>
+    </ClCompile>
+    <ClCompile Include="RunDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_Client.cpp">
+      <Filter>moc</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moc_Server.cpp">
+      <Filter>moc</Filter>
+    </ClCompile>
     <ClCompile Include="SqlModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +107,18 @@
       <Filter>Resource Files</Filter>
     </CustomBuild>
     <CustomBuild Include="GameWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RunDlg.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Client.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RunDlg.ui">
+      <Filter>GUI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Server.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
